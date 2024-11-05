@@ -1,0 +1,31 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from keras.models import Sequential
+from keras.datasets import mnist
+import keras
+
+(x_train,y_train),(x_test,y_test)=mnist.load_data()
+#normalize the data (max of 0-255 ,so divide by 255)
+x_train=x_train/255
+x_test=x_test/255
+
+model=Sequential() #Sequential as a feed forward network
+model.add(keras.layers.Flatten(input_shape=(28,28)))  
+model.add(keras.layers.Dense(256,activation='relu'))  
+model.add(keras.layers.Dense(10,activation='softmax'))
+
+model.compile(optimizer='sgd',loss='sparse_categorical_crossentropy',metrics=['accuracy'])H=model.fit(x_train,y_train,validation_data=(x_test,y_test),epochs=10) 
+
+test_loss,test_acc=model.evaluate(x_test,y_test) #evaluate the modelfor the test set
+#Print the accuracy and the loss of the model
+print("Loss=%.3f"%test_loss) 
+print("Accuracy=%.3f"%test_acc)
+
+import random
+n=random.randint(0,9999) # choose random number between 0-9999
+plt.imshow(x_test[n]) #display that image
+plt.show()
+pred=model.predict(x_test) #predict the output using the model
+print("Digit is : " ,np.argmax(pred[n])) # print output
